@@ -1,0 +1,6 @@
+DATABASE_URI='mysql+pymysql://root:suaSenha@localhost/nomeBanco'
+DB_HOST='localhost'
+DB_USER='root'
+DB_PASSWORD='suaSenha'
+DB_NAME='nomeBanco'
+FERNET_SECRET_KEY='suaChave-secrity'

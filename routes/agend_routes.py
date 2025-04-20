@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from services.agend_service import get_all_agends, get_agend_by_id, create_agend, update_agend, delete_agend,get_all_agends_with_serving
+from services.agend_service import get_all_agends, get_agend_by_id, create_agend, update_agend, delete_agend,get_all_agends_with_serving,get_free_agends_for_date
 
 agend_bp = Blueprint('agend', __name__)
 
@@ -26,3 +26,7 @@ def delete_existing_agend(agend_id):
 @agend_bp.route('/agend_with_serving', methods=['GET'])
 def get_agends_with_serving():
     return get_all_agends_with_serving()
+
+@agend_bp.route('/free',methods=['GET'])
+def get_free_agends():
+    return get_free_agends_for_date()

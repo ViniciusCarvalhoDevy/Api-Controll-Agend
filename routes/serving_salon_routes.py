@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from services.serving_salon_service import get_all_servings, get_serving_by_id, create_serving, update_serving, delete_serving
 
-serving_salon_bp = Blueprint('serving-salon', __name__)
+serving_salon_bp = Blueprint('serving_salon', __name__)
 
 @serving_salon_bp.route('/', methods=['GET'])
 def get_servings():

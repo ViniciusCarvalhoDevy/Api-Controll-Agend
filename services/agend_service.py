@@ -1,18 +1,34 @@
 from models.models import Agend
 from models.models import db
 from models.models import AgendHasServingSalon, Employee, Hours,ServingSalon
-from flask import jsonify
+from flask import jsonify, request
+from datetime import datetime
 
 def get_all_agends():
     agends = Agend.query.all()
     return jsonify([{'idAgend': a.idAgend, 'Employee_idEmployee': a.Employee_idEmployee, 'Hours_idHours': a.Hours_idHours,
                      'client': a.client, 'value': a.value, 'obs': a.obs, 'date': str(a.date)} for a in agends])
     
+# format parametro ?dateAgend=2025-04-17&idEmployee=1
+def get_free_agends_for_date():
+    dateAgend = request.args.get('dateAgend')  # Obtendo o parâmetro via query string
+    idEmployee = request.args.get('idEmployee')
+    dateAgend = datetime.strptime(dateAgend,"%Y-%m-%d")
+    dateAgend = dateAgend.date()
+    if not dateAgend or not idEmployee:
+        return jsonify({'error': 'Parâmetros insuficientes'}), 400
+    hours_agend = Hours.query.outerjoin(Agend, (Hours.idHours == Agend.Hours_idHours and Agend.date == dateAgend)).filter_by(Employee_idEmployee=idEmployee,date=dateAgend).all()
+    hours = Hours.query.all()
+    hours_free = []
+    for h in hours:
+        if  h.hours not in [i.hours for i in hours_agend]:
+            hours_free.append(h)
+    return jsonify([{'idHoursFree': hf.idHours, 'hoursFree': str(hf.hours)} for hf in hours_free])
+    
 def get_all_agends_with_serving():
     agends = Agend.query.all()
     agend_has_serving_salon = AgendHasServingSalon.query.all()
-    print([s.Servin_Salon_idserving_salon for s in agend_has_serving_salon if s.Agend_idAgend == 1])
-    return jsonify([{'idAgend': a.idAgend, 'Employee_Name': Employee.query.get(a.Employee_idEmployee).name, 'Hours_idHours': Hours.query.get(a.Hours_idHours).hours,
+    return jsonify([{'idAgend': a.idAgend, 'Employee_Name': Employee.query.get(a.Employee_idEmployee).name, 'Hours_idHours': str(Hours.query.get(a.Hours_idHours).hours),
                      'client': a.client, 'value': a.value, 'obs': a.obs, 'date': str(a.date),
                      'Servin_Salon_idserving_salon':[ServingSalon.query.get(s.Servin_Salon_idserving_salon).description for s in agend_has_serving_salon if s.Agend_idAgend == a.idAgend],} for a in agends])
     

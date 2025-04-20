@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from services.employee_service import get_all_employees, get_employee_by_id, create_employee, update_employee, delete_employee
+from services.employee_service import get_all_employees, get_employee_by_id, create_employee, update_employee, delete_employee,send_encrypted_key
 
 employee_bp = Blueprint('employee', __name__)
 
@@ -22,3 +22,7 @@ def update_existing_employee(employee_id):
 @employee_bp.route('/<int:employee_id>', methods=['DELETE'])
 def delete_existing_employee(employee_id):
     return delete_employee(employee_id)
+
+@employee_bp.route('/keycripyt/<string:pass>', methods=['GET'])
+def get_key_cripyt():
+    return send_encrypted_key()
