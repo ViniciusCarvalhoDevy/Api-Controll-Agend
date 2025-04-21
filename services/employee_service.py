@@ -1,19 +1,19 @@
 from models.models import Employee
 from models.models import db
 from flask import jsonify
-from .code.functions import cript_password
+from .code.functions import cript_password,decrypt_password
 from services.code.handleErros import safe_commit
 import os
 
 def get_all_employees():
     employees = Employee.query.all()
-    return jsonify([{'idEmployee': e.idEmployee, 'name': e.name, 'phone': e.phone, 'email': e.email,'activate':e.activate} for e in employees])
+    return jsonify([{'idEmployee': e.idEmployee, 'name': e.name, 'phone': e.phone, 'email': e.email,'activate':e.activate,'password':e.password} for e in employees])
 
 def get_employee_by_id(employee_id):
     employee = Employee.query.get(employee_id)
     if not employee:
         return jsonify({'message': 'Employee not found'}), 404
-    return jsonify({'idEmployee': employee.idEmployee, 'name': employee.name, 'phone': employee.phone, 'email': employee.email})
+    return jsonify({'idEmployee': employee.idEmployee, 'name': employee.name, 'phone': employee.phone, 'email': employee.email,'password':employee.password})
 
 def get_employee_password_by_id(employee_id):
     employee = Employee.query.get(employee_id)
@@ -44,7 +44,7 @@ def update_password_employee(employee_id, data):
     employee = Employee.query.get(employee_id)
     if not employee:
         return jsonify({'message': 'Employee not found'}), 404
-    employee.password = data['password']
+    employee.password = cript_password(data['password'])
     safe_commit(db.session)
     return jsonify({'message': 'Password Employee updated'}), 200
 
@@ -72,3 +72,16 @@ def send_encrypted_key(passw):
         return jsonify({'key': chave_secreta})
     else:
         return  jsonify({'error': 'Senha invalida'}), 404
+def login_employee(data):
+    employee = Employee.query.filter_by(phone=data['phone']).first()
+    if employee:
+        password_employee = decrypt_password(employee.password)
+        password_data = decrypt_password(data['password'])
+        if password_data == password_employee:
+            return jsonify( {'idEmployee': employee.idEmployee, 'name': employee.name, 'phone': employee.phone, 'email': employee.email,'password':employee.password}),200
+        else:
+            jsonify({'error': 'Senha Invalida'}), 404
+    else:
+        jsonify({'error': 'Numero de Celular náo encontrado'}), 404
+    
+    
