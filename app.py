@@ -5,6 +5,7 @@ from routes.employee_routes import employee_bp
 from routes.hours_routes import hours_bp
 from routes.serving_salon_routes import serving_salon_bp
 from routes.agend_routes import agend_bp
+from routes.agend_serving_routes import agend_serving_salon_bp
 from models.models import db
 from key_manager import load_key  # Importa a função que carrega a chave
 from cryptography.fernet import Fernet
@@ -24,5 +25,6 @@ app.register_blueprint(employee_bp, url_prefix='/employee')
 app.register_blueprint(hours_bp, url_prefix='/hours')
 app.register_blueprint(serving_salon_bp, url_prefix='/serving_salon')
 app.register_blueprint(agend_bp, url_prefix='/agend')
+app.register_blueprint(agend_serving_salon_bp, url_prefix='/agend_serving_salon')
 
 app.run(debug=True)

@@ -10,7 +10,7 @@ class Employee(db.Model):
     name = db.Column(db.String(255), nullable=False)
     phone = db.Column(db.BigInteger, nullable=True)
     email = db.Column(db.String(255), nullable=True)
-    password = db.Column(db.String(8), nullable=True)
+    password = db.Column(db.String(255), nullable=True)
     activate = db.Column(db.Boolean,nullable=True)
 class Hours(db.Model):
     idHours = db.Column(db.Integer, primary_key=True)

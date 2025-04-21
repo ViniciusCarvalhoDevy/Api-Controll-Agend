@@ -1,5 +1,6 @@
 from models.models import ServingSalon,db
 from flask import jsonify
+from services.code.handleErros import safe_commit
 
 def get_all_servings():
     serving = ServingSalon.query.all()
@@ -14,7 +15,7 @@ def get_serving_by_id(serving_id):
 def create_serving(data):
     new_serving = ServingSalon(description=data['description'])
     db.session.add(new_serving)
-    db.session.commit()
+    safe_commit(db.session)
     return jsonify({'message': 'serving created'}), 201
 
 def update_serving(serving_id, data):
@@ -22,7 +23,7 @@ def update_serving(serving_id, data):
     if not serving:
         return jsonify({'message': 'serving not found'}), 404
     serving.description = data['description']
-    db.session.commit()
+    safe_commit(db.session)
     return jsonify({'message': 'serving updated'}), 200
 
 def delete_serving(serving_id):
@@ -30,5 +31,5 @@ def delete_serving(serving_id):
     if not serving:
         return jsonify({'message': 'serving not found'}), 404
     db.session.delete(serving)
-    db.session.commit()
+    safe_commit(db.session)
     return jsonify({'message': 'serving deleted'}), 200

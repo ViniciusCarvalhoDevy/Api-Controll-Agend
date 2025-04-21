@@ -3,6 +3,7 @@ from models.models import db
 from models.models import AgendHasServingSalon, Employee, Hours,ServingSalon
 from flask import jsonify, request
 from datetime import datetime
+from services.code.handleErros import safe_commit
 
 def get_all_agends():
     agends = Agend.query.all()
@@ -31,6 +32,13 @@ def get_all_agends_with_serving():
     return jsonify([{'idAgend': a.idAgend, 'Employee_Name': Employee.query.get(a.Employee_idEmployee).name, 'Hours_idHours': str(Hours.query.get(a.Hours_idHours).hours),
                      'client': a.client, 'value': a.value, 'obs': a.obs, 'date': str(a.date),
                      'Servin_Salon_idserving_salon':[ServingSalon.query.get(s.Servin_Salon_idserving_salon).description for s in agend_has_serving_salon if s.Agend_idAgend == a.idAgend],} for a in agends])
+
+def get_agend_with_serving_for_id(agend_id):
+    agend = Agend.query.get(agend_id)
+    agend_has_serving_salon = AgendHasServingSalon.query.all()
+    return jsonify({'idAgend': agend.idAgend, 'Employee_Name': Employee.query.get(agend.Employee_idEmployee).name, 'Hours_idHours': str(Hours.query.get(agend.Hours_idHours).hours),
+                     'client': agend.client, 'value': agend.value, 'obs': agend.obs, 'date': str(agend.date),
+                     'Servin_Salon_idserving_salon':[ServingSalon.query.get(s.Servin_Salon_idserving_salon).description for s in agend_has_serving_salon if s.Agend_idAgend == agend.idAgend]})
     
 def get_agend_by_id(agend_id):
     agend = Agend.query.get(agend_id)
@@ -44,7 +52,7 @@ def create_agend(data):
     new_agend = Agend(Employee_idEmployee=data['Employee_idEmployee'], Hours_idHours=data['Hours_idHours'],
                       client=data['client'], value=data['value'], obs=data['obs'], date=data['date'])
     db.session.add(new_agend)
-    db.session.commit()
+    safe_commit(db.session)   
     return jsonify({'message': 'Agend created'}), 201
 
 def update_agend(agend_id, data):
@@ -57,7 +65,7 @@ def update_agend(agend_id, data):
     agend.value = data['value']
     agend.obs = data['obs']
     agend.date = data['date']
-    db.session.commit()
+    safe_commit(db.session) 
     return jsonify({'message': 'Agend updated'}), 200
 
 def delete_agend(agend_id):
@@ -65,5 +73,5 @@ def delete_agend(agend_id):
     if not agend:
         return jsonify({'message': 'Agend not found'}), 404
     db.session.delete(agend)
-    db.session.commit()
+    safe_commit(db.session)
     return jsonify({'message': 'Agend deleted'}), 200
