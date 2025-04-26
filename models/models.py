@@ -19,14 +19,7 @@ class Hours(db.Model):
 class ServingSalon(db.Model):
     idserving_salon = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(255), nullable=False)
-
-class Availability(db.Model):
-    idAvailability = db.Column(db.Integer, primary_key=True)
-    Employee_idEmployee = db.Column(db.Integer, db.ForeignKey('employee.idEmployee'), nullable=False)
-    available = db.Column(db.Boolean, default=True)
-    dataAvailability = db.Column(db.Date, nullable=False)
-    Hours_idHours = db.Column(db.Integer, db.ForeignKey('hours.idHours'), nullable=False)
-
+    
 class Agend(db.Model):
     idAgend = db.Column(db.Integer, primary_key=True)
     Employee_idEmployee = db.Column(db.Integer, db.ForeignKey('employee.idEmployee'), nullable=False)

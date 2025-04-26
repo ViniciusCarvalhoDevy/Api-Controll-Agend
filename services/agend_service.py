@@ -53,7 +53,8 @@ def create_agend(data):
                       client=data['client'], value=data['value'], obs=data['obs'], date=data['date'])
     db.session.add(new_agend)
     safe_commit(db.session)   
-    return jsonify({'message': 'Agend created'}), 201
+    return jsonify({'message': 'Agend created','Agend': {'idAgend': new_agend.idAgend, 'Employee_idEmployee': new_agend.Employee_idEmployee, 'Hours_idHours': new_agend.Hours_idHours,
+                     'client': new_agend.client, 'value': new_agend.value, 'obs': new_agend.obs, 'date': str(new_agend.date)}}), 201
 
 def update_agend(agend_id, data):
     agend = Agend.query.get(agend_id)
@@ -66,7 +67,8 @@ def update_agend(agend_id, data):
     agend.obs = data['obs']
     agend.date = data['date']
     safe_commit(db.session) 
-    return jsonify({'message': 'Agend updated'}), 200
+    return jsonify({'message': 'Agend updated','Agend': {'idAgend': agend.idAgend, 'Employee_idEmployee': agend.Employee_idEmployee, 'Hours_idHours': agend.Hours_idHours,
+                     'client': agend.client, 'value': agend.value, 'obs': agend.obs, 'date': str(agend.date)}}), 200
 
 def delete_agend(agend_id):
     agend = Agend.query.get(agend_id)
