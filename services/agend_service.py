@@ -29,7 +29,7 @@ def get_free_agends_for_date():
 def get_all_agends_with_serving():
     agends = Agend.query.all()
     agend_has_serving_salon = AgendHasServingSalon.query.all()
-    return jsonify([{'idAgend': a.idAgend, 'Employee_Name': Employee.query.get(a.Employee_idEmployee).name, 'Hours_idHours': str(Hours.query.get(a.Hours_idHours).hours),
+    return jsonify([{'idAgend': a.idAgend, 'Employee':{'idEmployee': a.Employee_idEmployee,'name': Employee.query.get(a.Employee_idEmployee).name},'Hours':{ 'idHours': a.Hours_idHours,'hours':str(Hours.query.get(a.Hours_idHours).hours)},
                      'client': a.client, 'value': a.value, 'obs': a.obs, 'date': str(a.date),
                      'Servin_Salon_idserving_salon':[ServingSalon.query.get(s.Servin_Salon_idserving_salon).description for s in agend_has_serving_salon if s.Agend_idAgend == a.idAgend],} for a in agends])
 
